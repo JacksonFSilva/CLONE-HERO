@@ -2,7 +2,7 @@
 Hi everyone, 
 
 This is something that I made for fun. 
-I had a broke guitar hero controller and wanted to play Clone hero  / Guitar Hero 3 on PC and had an Arduino Leonardo, so I planned to make it work together and it's working very fine and very responsive.
+I had a broke Guitar Hero controller and wanted to play Clone hero / Guitar Hero 3 on PC and had an Arduino Leonardo, so I planned to make it work together and it's working very fine and very responsive.
 
 I've used this library for the job and it's great. 
 
