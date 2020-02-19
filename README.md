@@ -102,8 +102,7 @@ else if (digitalRead(DpUp) == LOW) //UP
 else {
   Joystick.setHatSwitch(Dpad, JOYSTICK_HATSWITCH_RELEASE);
 }
-   
-   
+      
 
    // Buttons
   if (digitalRead(Bt1) == LOW) //Joystick Button 1
