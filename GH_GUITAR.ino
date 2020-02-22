@@ -39,7 +39,7 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
   int WhammyBarValue = 0;
   int WhammyBarValueByte = 0;
   int Dpad;
-  int period = 6;
+  int period = 11/2;
   unsigned long time_now = 0;
 
 void setup(){
