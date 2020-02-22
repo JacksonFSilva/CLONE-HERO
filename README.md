@@ -8,7 +8,7 @@ I've used this library for the job and it's great.
 
 https://github.com/MHeironimus/ArduinoJoystickLibrary
 
-I realized that using #define to define ports I had way better responsiveness instead of using pinMode to map it and didn't have to use a delay at the end of the loop. 
+I realized that using #define to define ports I had way better responsiveness instead of using pinMode to map it and didn't have to use a delay at the end of the loop, instead I used millis function.  
 
 If you want to use another Arduino board based on AtMega32u4  like ProMicro, you'll have to redefine the ports.
 I tested it compared with a cheap USB joystick that I have and was obviously way more responsive, especially when you have to activate two or more buttons at the same time.
