@@ -13,18 +13,18 @@ and I didn't have to use a delay at the end of the loop. */
 
 // PINS 2 to 13 in Arduino Board. A3 Whammy Bar's PIN. 
 #include <Joystick.h>
-#define Bt1 2 
-#define Bt2 3 
-#define Bt3 4 
-#define Bt4 5 
-#define Bt5 6 
-#define Bt6 7 
-#define Bt7 8 
-#define Bt8 9 
-#define DpUp 10 
-#define DpDown 11 
-#define DpLeft 12 
-#define DpRight 13
+#define Bt1 (INPUT_PULLUP,2)
+#define Bt2 (INPUT_PULLUP,3) 
+#define Bt3 (INPUT_PULLUP,4) 
+#define Bt4 (INPUT_PULLUP,5) 
+#define Bt5 (INPUT_PULLUP,6) 
+#define Bt6 (INPUT_PULLUP,7) 
+#define Bt7 (INPUT_PULLUP,8) 
+#define Bt8 (INPUT_PULLUP,9) 
+#define DpUp (INPUT_PULLUP,10) 
+#define DpDown (INPUT_PULLUP,11) 
+#define DpLeft (INPUT_PULLUP,12) 
+#define DpRight (INPUT_PULLUP,13)
 #define Whammy A3 
 
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
@@ -39,31 +39,19 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
   int WhammyBarValue = 0;
   int WhammyBarValueByte = 0;
   int Dpad;
-  int period = 11/2;
+  int period = 5;
   unsigned long time_now = 0;
 
 void setup(){
-  
-      // D-PADS BUTTONS
-    pinMode(DpUp, INPUT_PULLUP);
-    pinMode(DpDown, INPUT_PULLUP);
-    pinMode(DpLeft, INPUT_PULLUP);
-    pinMode(DpRight, INPUT_PULLUP);
-    
-    //BUTTONS
-    pinMode(Bt1, INPUT_PULLUP); 
-    pinMode(Bt2, INPUT_PULLUP);
-    pinMode(Bt3, INPUT_PULLUP);
-    pinMode(Bt4, INPUT_PULLUP);
-    pinMode(Bt5, INPUT_PULLUP);
-    pinMode(Bt6, INPUT_PULLUP);
-    pinMode(Bt7, INPUT_PULLUP);
-    pinMode(Bt8, INPUT_PULLUP);
-  
-
+      
   Joystick.begin();
 }
 void loop() {
+
+  // Make Loop Faster
+  while(true){
+    
+ 
  // WHAMMY BAR
    
    WhammyBarValue = analogRead(Whammy);
@@ -164,5 +152,5 @@ if (digitalRead(Bt8) == LOW) //Joystick Button 8
     while(millis() < time_now + period){
         //wait approx. [period] ms
     }
-
+ }
 }
