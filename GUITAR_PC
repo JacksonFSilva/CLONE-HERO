@@ -40,7 +40,7 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
   int WhammyBarValue = 0;
   int WhammyBarValueByte = 0;
   int Dpad;
-  const unsigned long event_1 = 5;
+
 
 void setup(){
   
@@ -78,7 +78,7 @@ void setup(){
     }
    Joystick.setZAxis(WhammyBarValueByte);
    
-if ( millis() > event_1 ) {
+
 
 // READ D-PADS
 Joystick.setHatSwitch(0,Dpad);
@@ -159,7 +159,7 @@ if (digitalRead(Bt8) == LOW) //Joystick Button 8
   Joystick.releaseButton(7);
   } 
    
-  }
+  
  }
 }
 void loop() {
