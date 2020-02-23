@@ -39,8 +39,7 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
   int WhammyBarValue = 0;
   int WhammyBarValueByte = 0;
   int Dpad;
-  int period = 5;
-  unsigned long time_now = 0;
+  const unsigned long event_1 = 5;
 
 void setup(){
       
@@ -63,10 +62,11 @@ void loop() {
     }
    Joystick.setZAxis(WhammyBarValueByte);
    
-// READ D-PADS
 
-        time_now += period;
-        
+if ( millis() > event_1 ) {
+
+// READ D-PADS
+       
 if (digitalRead(DpLeft) == LOW) // LEFT
 {
     Joystick.setHatSwitch(Dpad,270);
@@ -148,9 +148,7 @@ if (digitalRead(Bt8) == LOW) //Joystick Button 8
     Joystick.pressButton(7);
 } else {
   Joystick.releaseButton(7);
-  } 
-    while(millis() < time_now + period){
-        //wait approx. [period] ms
-    }
+   } 
+  }  
  }
 }
