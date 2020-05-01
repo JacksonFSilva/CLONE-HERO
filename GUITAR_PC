@@ -1,17 +1,17 @@
 // Guitar Hero / Clone Hero guitar controller to PC ZERO DELAY.
 // Use it with Arduino Leonardo.
-// If you want to use t with ProMicro or another board based on Atmega32u4 you'll have to redefine ports.
-// PINS 2 to 9 are Buttons, being 2 to 6 (green, red, yellow, blue and orange)
-// And 7 to 9 (start, select and share / home) buttons. 
-// PINS 10 to 13 are DPAD buttons, being 10 to 13 (up, down, left, right). 
-// PIN A3 it's where is connected the whammy bar, use B10k POTS, same as Guitar Hero's guitars POTS original value.
-// By Jackson F. da Silva, 02/18/2020, Brazil.    
+// If you want to use it with ProMicro or another board based on Atmega32u4 you'll have to redefine the ports, if needed.
+// PINS 2 to 8 are Buttons, being 2 to 6 (green, red, yellow, blue and orange)and PINS 7 to 8 (start - select) buttons. 
+// PINS 9 to 12 are Axis buttons . 
+// PIN A0 it's where is connected the whammy bar, use B10k POTS, same as Guitar Hero's guitars POTS original value.
+// After testing several times, instead of using pinMode to map Arduino's board PINS,
+// I realized that defining the ports and using 4.7k external pullup resistors improved the joystick responsiveness,
+// and I didn't have to use a delay at the end of the loop. If you do the same don't forget to erase in void setup the pin mode declarations.
+// If you won't use external resistors, you can use the builtin resistors of your board, just as declared (INPUT_PULLUP) on void setup and remove (//) of delay(10); on the code.  
+// I've created a loop inside the void loop to make it loop faster. 
+// By Jackson F. da Silva, 02/27/2020, Brazil.
 
-/* After testing several times, instead of using pinMode to map Arduino's board PINS,
-I realized that defining the ports improved the joystick responsiveness,
-and I didn't have to use a delay at the end of the loop. */
-
-// PINS 2 to 13 in Arduino Board. A3 Whammy Bar's PIN. 
+// DEFINING PORTS  - (NAME  - PIN NUMBER ON THE BOARD) 
 #include <Joystick.h>
 #define Bt1 2 
 #define Bt2 3 
@@ -20,31 +20,38 @@ and I didn't have to use a delay at the end of the loop. */
 #define Bt5 6 
 #define Bt6 7 
 #define Bt7 8 
-#define Bt8 9 
-#define DpUp 10 
-#define DpDown 11 
-#define DpLeft 12 
-#define DpRight 13
-#define Whammy A3
+#define AxUp 9 
+#define AxDown 10 
+#define AxLeft 11 
+#define AxRight 12
+#define Whammy A0 
 
-
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_GAMEPAD,
-  8, 0,                     // Button Count, Hat Switch Count
-  true, true, true,        // X and Y,  Z Axis
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_JOYSTICK,
+  7, 0,                     // Buttons Avaiable, DPAD (No Dpads in this case)
+  true, true, true,        //  X , Y and   Z Axis 
   false, false, false,    // No Rx, Ry, or Rz
   false, false,          // No rudder or throttle
   false, false, false); // No accelerator, brake, or steering
-  
-  
 
   int WhammyBarValue = 0;
   int WhammyBarValueByte = 0;
-
-
-
-void setup(){
   
-      // D-PADS BUTTONS
+  // VALUE OF THE BUTTONS WHEN NOT PRESSING IT
+  int ButtonsOFF[7] = {0,0,0,0,0,0,0};
+
+  // AXIS VALUES
+  const int Clear = 0;       // Default value
+  const int Up = -127;      // Dpad UP
+  const int Rg =  127;     // Dpad Right
+  const int Dw =  127;    // Dpad Down
+  const int Lf = -127;   // Dpad Left
+  
+  
+void setup() {
+  
+  //-------------PIN MODE DECLARATIONS
+  
+  // Initialize DPAD Pins
     pinMode(DpUp, INPUT_PULLUP);
     pinMode(DpDown, INPUT_PULLUP);
     pinMode(DpLeft, INPUT_PULLUP);
@@ -58,117 +65,49 @@ void setup(){
     pinMode(Bt5, INPUT_PULLUP);
     pinMode(Bt6, INPUT_PULLUP);
     pinMode(Bt7, INPUT_PULLUP);
-    pinMode(Bt8, INPUT_PULLUP);
-  
-  
-  Joystick.begin();
-  // SET DPAD
-  Joystick.setXAxisRange(-1,1);
-  Joystick.setYAxisRange(-1,1);
-  Joystick.setXAxis(0);
-  Joystick.setYAxis(0);
+    
+  // ------------ END OF PIN MODE DECLARATIONS
+   
+// Initialize Joystick Library
+    Joystick.begin();
+    Joystick.setXAxisRange(Lf,Rg);
+    Joystick.setYAxisRange(Up,Dw);
+    Joystick.setXAxis(Clear);
+    Joystick.setYAxis(Clear);
 }
 void loop() {
-  // Make Loop Faster
-  while(true){
-    
+
+// Loop inside Void Loop
+while(true){
+
+// READ BUTTONS 1 - 7
+     for (int index = 0; index < 7; index++)  {
+     int ButtonsON = !digitalRead(index + Bt1);
+     if (ButtonsON != ButtonsOFF[index])
+     { Joystick.setButton(index, ButtonsON);
+     ButtonsOFF[index] = ButtonsON; }
  
- // WHAMMY BAR
+// READ AXES
+    
+    if   (digitalRead(DpLeft) == LOW) //DOWN
+    {    Joystick.setXAxis(Lf);  }
+    else if (digitalRead(DpRight) == LOW) //UP
+    {    Joystick.setXAxis(Rg);  } 
+    else if (digitalRead(DpDown) == LOW) //DOWN
+    {    Joystick.setYAxis(Dw);  }
+    else if (digitalRead(DpUp) == LOW) //UP
+    {    Joystick.setYAxis(Up);  } 
+    else { Joystick.setXAxis(Clear);
+           Joystick.setYAxis(Clear);}  // Clear Axes
+
+// READ WHAMMY BAR - A0
+     WhammyBarValue = analogRead(Whammy);
+     if (WhammyBarValue >= 1) {
+     WhammyBarValueByte = WhammyBarValue *1;
+      } else { WhammyBarValueByte = 0;
+      } Joystick.setZAxis(WhammyBarValueByte);
    
-   WhammyBarValue = analogRead(Whammy);
-   
-   if (WhammyBarValue >= 1) {
-  WhammyBarValueByte = WhammyBarValue *1;
-   } else {
-    WhammyBarValueByte = 0;
+    //delay(10);          
     }
-   Joystick.setZAxis(WhammyBarValueByte);
-   
-
-
-// READ D-PADS
-  
-if (digitalRead(DpLeft) == LOW) // LEFT
-{   Joystick.setXAxis(1);
-}  
-else if (digitalRead(DpRight) == LOW) //RIGHT
-{   Joystick.setXAxis(-1);   
-} else {
-     Joystick.setXAxis(0);}
-     
-if (digitalRead(DpDown) == LOW) //DOWN
-{    Joystick.setYAxis(1);
-}
-else if (digitalRead(DpUp) == LOW) //UP
-{    Joystick.setYAxis(-1);
-}else {
-     Joystick.setYAxis(0);
-}
-
-   
-        
-
-   // Buttons
-  if (digitalRead(Bt1) == LOW) //Joystick Button 1
-{
-    Joystick.pressButton(0);
-} else {
-  Joystick.releaseButton(0);           
-  }    
-
-if (digitalRead(Bt2) == LOW) // Joystick Button 2
-{
-    Joystick.pressButton(1);
-} else {
-  Joystick.releaseButton(1);
-  } 
-   
-if (digitalRead(Bt3) == LOW) //Joystick Button 3
-{
-    Joystick.pressButton(2);
-} else {
-  Joystick.releaseButton(2);
-  } 
-
-  
-if (digitalRead(Bt4) == LOW) //Joystick Button 4
-{
-    Joystick.pressButton(3);
-} else {
-  Joystick.releaseButton(3);
-  } 
-
-  
-if (digitalRead(Bt5) == LOW) //Joystick Button 5
-{
-    Joystick.pressButton(4);
-} else {
-  Joystick.releaseButton(4);
   }
-
-if (digitalRead(Bt6) == LOW) //Joystick Button 6
-{
-    Joystick.pressButton(5);
-} else {
-  Joystick.releaseButton(5);
-  }
-
-if (digitalRead(Bt7) == LOW) //Joystick Button 7
-{
-    Joystick.pressButton(6);
-} else {
-  Joystick.releaseButton(6);
-  } 
-
-if (digitalRead(Bt8) == LOW) //Joystick Button 8
-{
-    Joystick.pressButton(7);
-} else {
-  Joystick.releaseButton(7);
-  } 
-   
-  
- }
-
-  
 }
