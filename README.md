@@ -12,6 +12,8 @@ I realized that using #define to define ports I had way better responsiveness in
 
 If you want to use another Arduino board based on AtMega32u4  like ProMicro, you'll have to redefine the ports, I've wrote some commnents on the code explaining it. 
 
-I'll add some photos and details about it soon, for while here it is the code. 
+If you guys want to make something like it and wanna know more details about it send me a message on reddit.
+https://www.reddit.com/user/Jackson_FS
+
 
 
